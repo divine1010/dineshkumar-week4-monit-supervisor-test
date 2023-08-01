@@ -1,0 +1,59 @@
+set daemon  5             # check services at 5 seconds intervals
+
+set log /var/log/monit.log
+
+set idfile /var/lib/monit/id
+
+set statefile /var/lib/monit/stat
+
+ set mailserver localhost
+  # Set the mailserver to localhost
+ set mail-format {
+  from: dineshkumarcse1001@gmail.com
+  subject: Monit Alert -- $SERVICE $EVENT at $DATE
+ # Email subject format
+  message: $EVENT Service $SERVICE
+                 Date: $DATE
+                 Action: $ACTION
+                 Host: $HOST
+                 Description: $DESCRIPTION
+
+             Yours sincerely,
+             Monit
+ }
+   # Email message format
+
+set alert chandrakumar@mallow-tech.com  # Receiver email address
+
+set httpd port 2812 and use address 0.0.0.0 allow 0.0.0.0/0
+   #  use address localhost
+   # only accept connection from localhost (drop if you use M/Monit)
+   # allow localhost       
+   # allow localhost to connect to the server and
+    allow admin:monit
+   # require user 'admin' with password 'monit'
+#    #with ssl {            # enable SSL/TLS and set path to server certificate
+#    #    pemfile: /etc/ssl/certs/monit.pem
+#    #}
+#
+## 
+check process apache with pidfile /var/run/apache2/apache2.pid
+    start program = "/etc/init.d/apache2 start" with timeout 30 seconds
+    stop program = "/etc/init.d/apache2 stop"
+    restart Program = "/etc/init.d/apache2 restart"
+    if failed host localhost port 80 then restart
+    if failed host localhost port 80 then alert
+
+
+
+Check file system_log with path "/home/dinesh/Desktop/week4_test/system_info.log"
+        if size > 15360 B
+        then alert
+        if size > 15360 B
+        then exec "/bin/bash -c '/home/dinesh/Desktop/week4_test/kill_print_system_details.sh'"
+        else exec "/bin/bash -c '/home/dinesh/Desktop/week4_test/print_system_details.sh'"
+
+Check file check_system_log with path "/home/dinesh/Desktop/week4_test/system_info.log"
+        if size > 15360 B
+        then exec "/bin/bash -c '/home/dinesh/Desktop/week4_test/free_system_log.sh'"
+
